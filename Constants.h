@@ -45,65 +45,48 @@ const SolenoidConfig solenoid_config[] =
     { true, false, false,  true,  true}  // SIXTH
 };
 
-SolenoidConfig get_incoming_solenoids(Gear current_gear, Gear new_gear)
+// if engaged is false, it looks for incoming gears, if engaged is true, outgoing gears
+SolenoidConfig get_solenoid_change(Gear current_gear, Gear new_gear, bool engaged = false)
 {
-    SolenoidConfig incoming_solenoids = {false, false, false, false, false};
-    SolenoidConfig current_conf = solenoid_config[current_gear];
-    SolenoidConfig new_conf = solenoid_config[new_gear];
-
-    // if current clutch is disengaged, but changes on gear shift, mark as incoming
-    if (current_conf.selection_valve == false &&
-        current_conf.selection_valve != new_conf.selection_valve)
-        incoming_solenoids.selection_valve = true;
-
-    if (current_conf.clutch_a == false &&
-        current_conf.clutch_a != new_conf.clutch_a)
-        incoming_solenoids.clutch_a = true;
-
-    if (current_conf.clutch_b == false &&
-        current_conf.clutch_b != new_conf.clutch_b)
-        incoming_solenoids.clutch_b = true;
-
-    if (current_conf.clutch_c == false &&
-        current_conf.clutch_c != new_conf.clutch_c)
-        incoming_solenoids.clutch_c = true;
-
-    if (current_conf.brake_d_clutch_e == false &&
-        current_conf.brake_d_clutch_e != new_conf.brake_d_clutch_e)
-        incoming_solenoids.brake_d_clutch_e = true;
-
-    return incoming_solenoids;
-}
-
-SolenoidConfig get_outgoing_solenoids(Gear current_gear, Gear new_gear)
-{
-    SolenoidConfig outgoing_solenoids = {false, false, false, false, false};
+    SolenoidConfig changing_solenoids = {false, false, false, false, false};
     SolenoidConfig current_conf = solenoid_config[current_gear];
     SolenoidConfig new_conf = solenoid_config[new_gear];
 
     // if current clutch is engaged, but changes on gear shift, mark as outgoing
-    if (current_conf.selection_valve == true &&
+    if (current_conf.selection_valve == engaged &&
         current_conf.selection_valve != new_conf.selection_valve)
-        outgoing_solenoids.selection_valve = true;
+        changing_solenoids.selection_valve = true;
 
-    if (current_conf.clutch_a == true &&
+    if (current_conf.clutch_a == engaged &&
         current_conf.clutch_a != new_conf.clutch_a)
-        outgoing_solenoids.clutch_a = true;
+        changing_solenoids.clutch_a = true;
 
-    if (current_conf.clutch_b == true &&
+    if (current_conf.clutch_b == engaged &&
         current_conf.clutch_b != new_conf.clutch_b)
-        outgoing_solenoids.clutch_b = true;
+        changing_solenoids.clutch_b = true;
 
-    if (current_conf.clutch_c == true &&
+    if (current_conf.clutch_c == engaged &&
         current_conf.clutch_c != new_conf.clutch_c)
-        outgoing_solenoids.clutch_c = true;
+        changing_solenoids.clutch_c = true;
 
-    if (current_conf.brake_d_clutch_e == true &&
+    if (current_conf.brake_d_clutch_e == engaged &&
         current_conf.brake_d_clutch_e != new_conf.brake_d_clutch_e)
-        outgoing_solenoids.brake_d_clutch_e = true;
+        changing_solenoids.brake_d_clutch_e = true;
 
-    return outgoing_solenoids;
+    return changing_solenoids;
 }
+
+SolenoidConfig get_incoming_solenoids(Gear current_gear, Gear new_gear)
+{
+    return get_solenoid_change(current_gear, new_gear, false);
+}
+
+SolenoidConfig get_outgoing_solenoids(Gear current_gear, Gear new_gear)
+{
+    return get_solenoid_change(current_gear, new_gear, true);
+}
+
+
 
 
 
