@@ -31,6 +31,17 @@ void loop()
     }
     if (true) // currently_shifting
     {
+        /////////////-WARNING!-///////////////////
+        //   SELECTION VALVE NOT MODULATED      //
+        //////////////////////////////////////////
+
+        // selection valve before prefill
+        // gear skip will only skip a single gear, which means that in the case of the 2->4, 4->2, 1->3, or 3->1 gearshift, 
+        // we are still safe while not modulating selection valve. 2nd and 3rd do not use selection valve or brake d/clutch e
+        // allowing for the only illegal shifts to be from 1->4-6 or 4-6->1 which should be impossible with our ECU control pattern.
+        // to protect against edge cases, we must first disengage clutches a->c then disable the selection valve, placing us in neutral
+        // at which point we can re-engage clutch A to put us in first
+
         // if prefill stage
         // {
         //      if prefill stage starting
